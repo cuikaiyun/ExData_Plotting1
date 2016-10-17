@@ -7,7 +7,8 @@ householdpower <- read.table(
     "household_power_consumption.txt",
     skip = skipcount,
     nrows = 2880,
-    sep = ";"
+    sep = ";",
+    stringsAsFactors = FALSE
 )
 
 ##add column names to the dataset
@@ -19,23 +20,21 @@ colnames(householdpower) <-
         stringsAsFactors = FALSE
     )
 
+Datetime <- strptime(paste(householdpower$Date, householdpower$Time), "%d/%m/%Y %H:%M:%S")
+
+householdpower <- cbind(householdpower, Datetime)
+
 ##open a png graphics device
 png(filename = "plot2.png", width = 480, height = 480)
 
 ##make a plot
 plot(
-    1:dim(householdpower)[1],
+    householdpower$Datetime,
     householdpower$Global_active_power,
     xlab = "",
     ylab = "Global Active Power (kilowatts)",
-    type = "l",
-    xaxt = "n"
+    type = "l"
 )
-
-##add the axis
-axis(1,
-     at = c(1, 1440, 2880),
-     labels = c("Thu", "Fri", "Sat"))
 
 ##close the graphics device
 dev.off()

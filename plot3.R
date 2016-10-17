@@ -7,7 +7,8 @@ householdpower <- read.table(
     "household_power_consumption.txt",
     skip = skipcount,
     nrows = 2880,
-    sep = ";"
+    sep = ";",
+    stringsAsFactors = FALSE
 )
 
 ##add column names to the dataset
@@ -19,28 +20,27 @@ colnames(householdpower) <-
         stringsAsFactors = FALSE
     )
 
+Datetime <- strptime(paste(householdpower$Date, householdpower$Time), "%d/%m/%Y %H:%M:%S")
+
+householdpower <- cbind(householdpower, Datetime)
+
 ##open the png graphics device
 png(filename = "plot3.png", width = 480, height = 480)
 
 ##make a plot
 plot(
-    1:dim(householdpower)[1],
+    householdpower$Datetime,
     householdpower$Sub_metering_1,
     xlab = "",
     ylab = "Energy sub metering",
-    type = "l",
-    xaxt = "n"
+    type = "l"
 )
 
 ##add additional two lines
-lines(1:dim(householdpower)[1], householdpower$Sub_metering_2, col = "red")
-lines(1:dim(householdpower)[1], householdpower$Sub_metering_3, col = "blue")
+lines(householdpower$Datetime, householdpower$Sub_metering_2, col = "red")
+lines(householdpower$Datetime, householdpower$Sub_metering_3, col = "blue")
 
-##add the xaxis and legend
-axis(1,
-     at = c(1, 1440, 2880),
-     labels = c("Thu", "Fri", "Sat"))
-
+##add the legend
 legend(
     "topright",
     legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),

@@ -8,7 +8,8 @@ householdpower <-
         "household_power_consumption.txt",
         skip = skipcount,
         nrows = 2880,
-        sep = ";"
+        sep = ";",
+        stringsAsFactors = FALSE
     )
 
 ##add column names to the dataset

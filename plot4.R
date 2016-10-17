@@ -7,7 +7,8 @@ householdpower <- read.table(
     "household_power_consumption.txt",
     skip = skipcount,
     nrows = 2880,
-    sep = ";"
+    sep = ";",
+    stringsAsFactors = FALSE
 )
 
 colnames(householdpower) <-
@@ -18,54 +19,43 @@ colnames(householdpower) <-
         stringsAsFactors = FALSE
     )
 
+Datetime <- strptime(paste(householdpower$Date, householdpower$Time), "%d/%m/%Y %H:%M:%S")
+
+householdpower <- cbind(householdpower, Datetime)
+
 png(filename = "plot4.png", width = 480, height = 480)
 
 par(mfrow = c(2, 2))
 
 ##topleft #1 plot
 plot(
-    1:dim(householdpower)[1],
+    householdpower$Datetime,
     householdpower$Global_active_power,
     xlab = "",
     ylab = "Global Active Power",
-    type = "l",
-    xaxt = "n"
+    type = "l"
 )
-
-axis(1,
-     at = c(1, 1440, 2880),
-     labels = c("Thu", "Fri", "Sat"))
 
 ##topright #2 plot
 plot(
-    1:dim(householdpower)[1],
+    householdpower$Datetime,
     householdpower$Voltage,
     xlab = "datetime",
     ylab = "Voltage",
-    type = "l",
-    xaxt = "n"
+    type = "l"
 )
-
-axis(1,
-     at = c(1, 1440, 2880),
-     labels = c("Thu", "Fri", "Sat"))
 
 ##bottomleft #3 plot
 plot(
-    1:dim(householdpower)[1],
+    householdpower$Datetime,
     householdpower$Sub_metering_1,
     xlab = "",
     ylab = "Energy sub metering",
-    type = "l",
-    xaxt = "n"
+    type = "l"
 )
 
-lines(1:dim(householdpower)[1], householdpower$Sub_metering_2, col = "red")
-lines(1:dim(householdpower)[1], householdpower$Sub_metering_3, col = "blue")
-
-axis(1,
-     at = c(1, 1440, 2880),
-     labels = c("Thu", "Fri", "Sat"))
+lines(householdpower$Datetime, householdpower$Sub_metering_2, col = "red")
+lines(householdpower$Datetime, householdpower$Sub_metering_3, col = "blue")
 
 legend(
     "topright",
@@ -76,17 +66,12 @@ legend(
 
 ##bottomright #4 plot
 plot(
-    1:dim(householdpower)[1],
+    householdpower$Datetime,
     householdpower$Global_reactive_power,
     xlab = "datetime",
     ylab = "Global_reactive_power",
-    type = "l",
-    xaxt = "n"
+    type = "l"
 )
-
-axis(1,
-     at = c(1, 1440, 2880),
-     labels = c("Thu", "Fri", "Sat"))
 
 dev.off()
 
